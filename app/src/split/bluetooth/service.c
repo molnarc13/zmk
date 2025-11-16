@@ -207,9 +207,9 @@ ssize_t bt_gatt_attr_read_input_split_cpf(struct bt_conn *conn, const struct bt_
 
 #define INPUT_SPLIT_CHARS(node_id)                                                                 \
     BT_GATT_CHARACTERISTIC(BT_UUID_DECLARE_128(ZMK_SPLIT_BT_INPUT_EVENT_UUID),                     \
-                           BT_GATT_CHRC_NOTIFY, BT_GATT_PERM_READ_ENCRYPT, NULL, NULL, NULL),      \
+                           BT_GATT_CHRC_NOTIFY, BT_GATT_PERM_READ, NULL, NULL, NULL),      \
         BT_GATT_CCC(split_input_events_ccc,                                                        \
-                    BT_GATT_PERM_READ_ENCRYPT | BT_GATT_PERM_WRITE_ENCRYPT),                       \
+                    BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),                       \
         BT_GATT_DESCRIPTOR(BT_UUID_GATT_CPF, BT_GATT_PERM_READ, bt_gatt_attr_read_input_split_cpf, \
                            NULL, (void *)DT_REG_ADDR(node_id)),
 
@@ -218,29 +218,29 @@ ssize_t bt_gatt_attr_read_input_split_cpf(struct bt_conn *conn, const struct bt_
 BT_GATT_SERVICE_DEFINE(
     split_svc, BT_GATT_PRIMARY_SERVICE(BT_UUID_DECLARE_128(ZMK_SPLIT_BT_SERVICE_UUID)),
     BT_GATT_CHARACTERISTIC(BT_UUID_DECLARE_128(ZMK_SPLIT_BT_CHAR_POSITION_STATE_UUID),
-                           BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY, BT_GATT_PERM_READ_ENCRYPT,
+                           BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY, BT_GATT_PERM_READ,
                            split_svc_pos_state, NULL, &position_state),
-    BT_GATT_CCC(split_svc_pos_state_ccc, BT_GATT_PERM_READ_ENCRYPT | BT_GATT_PERM_WRITE_ENCRYPT),
+    BT_GATT_CCC(split_svc_pos_state_ccc, BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),
     BT_GATT_CHARACTERISTIC(BT_UUID_DECLARE_128(ZMK_SPLIT_BT_CHAR_RUN_BEHAVIOR_UUID),
-                           BT_GATT_CHRC_WRITE_WITHOUT_RESP, BT_GATT_PERM_WRITE_ENCRYPT, NULL,
+                           BT_GATT_CHRC_WRITE_WITHOUT_RESP, BT_GATT_PERM_WRITE, NULL,
                            split_svc_run_behavior, &behavior_run_payload),
     BT_GATT_DESCRIPTOR(BT_UUID_NUM_OF_DIGITALS, BT_GATT_PERM_READ, split_svc_num_of_positions, NULL,
                        &num_of_positions),
 #if ZMK_KEYMAP_HAS_SENSORS
     BT_GATT_CHARACTERISTIC(BT_UUID_DECLARE_128(ZMK_SPLIT_BT_CHAR_SENSOR_STATE_UUID),
-                           BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY, BT_GATT_PERM_READ_ENCRYPT,
+                           BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY, BT_GATT_PERM_READ,
                            split_svc_sensor_state, NULL, &last_sensor_event),
-    BT_GATT_CCC(split_svc_sensor_state_ccc, BT_GATT_PERM_READ_ENCRYPT | BT_GATT_PERM_WRITE_ENCRYPT),
+    BT_GATT_CCC(split_svc_sensor_state_ccc, BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),
 #endif /* ZMK_KEYMAP_HAS_SENSORS */
     DT_FOREACH_STATUS_OKAY(zmk_input_split, INPUT_SPLIT_CHARS)
 #if IS_ENABLED(CONFIG_ZMK_SPLIT_PERIPHERAL_HID_INDICATORS)
         BT_GATT_CHARACTERISTIC(BT_UUID_DECLARE_128(ZMK_SPLIT_BT_UPDATE_HID_INDICATORS_UUID),
-                               BT_GATT_CHRC_WRITE_WITHOUT_RESP, BT_GATT_PERM_WRITE_ENCRYPT, NULL,
+                               BT_GATT_CHRC_WRITE_WITHOUT_RESP, BT_GATT_PERM_WRITE, NULL,
                                split_svc_update_indicators, NULL),
 #endif // IS_ENABLED(CONFIG_ZMK_SPLIT_PERIPHERAL_HID_INDICATORS)
     BT_GATT_CHARACTERISTIC(BT_UUID_DECLARE_128(ZMK_SPLIT_BT_SELECT_PHYS_LAYOUT_UUID),
                            BT_GATT_CHRC_WRITE | BT_GATT_CHRC_READ,
-                           BT_GATT_PERM_WRITE_ENCRYPT | BT_GATT_PERM_READ_ENCRYPT,
+                           BT_GATT_PERM_WRITE | BT_GATT_PERM_READ,
                            split_svc_get_selected_phys_layout, split_svc_select_phys_layout,
                            NULL), );
 
