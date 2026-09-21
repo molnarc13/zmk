@@ -507,10 +507,6 @@ static int update_peripheral_selected_layout(struct peripheral_slot *slot, uint8
         return -EAGAIN;
     }
 
-    if (bt_conn_get_security(slot->conn) < BT_SECURITY_L2) {
-        return -EAGAIN;
-    }
-
     int err = bt_gatt_write_without_response(slot->conn, slot->selected_physical_layout_handle,
                                              &layout_idx, sizeof(layout_idx), true);
 
@@ -797,9 +793,7 @@ static int stop_scanning(void) {
 static bool split_central_eir_found(const bt_addr_le_t *addr) {
     LOG_DBG("Found the split service");
 
-    // Reserve peripheral slot. Once the central has bonded to its peripherals,
-    // the peripheral MAC addresses will be validated internally and the slot
-    // reservation will fail if there is a mismatch.
+    // Reserve peripheral slot.
     int slot_idx = reserve_peripheral_slot(addr);
     if (slot_idx < 0) {
         LOG_INF("Unable to reserve peripheral slot (err %d)", slot_idx);
@@ -815,8 +809,7 @@ static bool split_central_eir_found(const bt_addr_le_t *addr) {
 
     LOG_DBG("Initiating new connection");
     struct bt_le_conn_param *param =
-        BT_LE_CONN_PARAM(CONFIG_ZMK_SPLIT_BLE_PREF_INT, CONFIG_ZMK_SPLIT_BLE_PREF_INT,
-                         CONFIG_ZMK_SPLIT_BLE_PREF_LATENCY, CONFIG_ZMK_SPLIT_BLE_PREF_TIMEOUT);
+        BT_LE_CONN_PARAM(6, 6, 0, 800);
     err = bt_conn_le_create(addr, BT_CONN_LE_CREATE_CONN, param, &slot->conn);
     if (err < 0) {
         LOG_ERR("Create conn failed (err %d) (create conn? 0x%04x)", err, BT_HCI_OP_LE_CREATE_CONN);
@@ -966,10 +959,6 @@ static void split_central_disconnected(struct bt_conn *conn, uint8_t reason) {
 
     k_msgq_put(&peripheral_event_msgq, &ev, K_NO_WAIT);
     k_work_submit(&peripheral_event_work);
-    // struct zmk_peripheral_battery_state_changed ev = {
-    //     .source = peripheral_slot_index_for_conn(conn), .state_of_charge = 0};
-    // k_msgq_put(&peripheral_batt_lvl_msgq, &ev, K_NO_WAIT);
-    // k_work_submit(&peripheral_batt_lvl_work);
 #endif // IS_ENABLED(CONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_FETCHING)
 
 #if IS_ENABLED(CONFIG_ZMK_INPUT_SPLIT)
@@ -991,16 +980,6 @@ static void split_central_security_changed(struct bt_conn *conn, bt_security_t l
                                            enum bt_security_err err) {
     struct peripheral_slot *slot = peripheral_slot_for_conn(conn);
     if (!slot || !slot->selected_physical_layout_handle) {
-        return;
-    }
-
-    if (err > 0) {
-        LOG_DBG("Skipping updating the physical layout for peripheral with security error");
-        return;
-    }
-
-    if (level < BT_SECURITY_L2) {
-        LOG_DBG("Skipping updating the physical layout for peripheral with insufficient security");
         return;
     }
 
@@ -1079,9 +1058,6 @@ void split_central_split_run_callback(struct k_work *work) {
         case ZMK_SPLIT_TRANSPORT_CENTRAL_CMD_TYPE_SET_HID_INDICATORS:
             LOG_WRN("do the indicators dance");
             if (peripherals[payload_wrapper.source].update_hid_indicators == 0) {
-                // It appears that sometimes the peripheral is considered connected
-                // before the GATT characteristics have been discovered. If this is
-                // the case, the update_hid_indicators handle will not yet be set.
                 LOG_WRN("NO HANDLE TO SET ON PERIPHERAL");
                 break;
             }
