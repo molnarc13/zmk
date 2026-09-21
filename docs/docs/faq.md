@@ -7,10 +7,10 @@ sidebar_label: FAQs
 
 As a best-in-class RTOS, Zephyr™ brings many [benefits](https://www.zephyrproject.org/benefits) to ZMK, such as:
 
-- A _single_ platform [supporting](https://docs.zephyrproject.org/3.5.0/boards/index.html) many architectures, processors and boards.
+- A _single_ platform [supporting](https://docs.zephyrproject.org/4.1.0/boards/index.html) many architectures, processors and boards.
 - Optimization for low-powered, small memory footprint devices.
-- Powerful hardware abstraction and configuration using [DeviceTree](https://docs.zephyrproject.org/3.5.0/build/dts/index.html) and [Kconfig](https://docs.zephyrproject.org/3.5.0/build/kconfig/index.html).
-- A BLE stack that periodically obtains [qualification](https://docs.zephyrproject.org/3.5.0/connectivity/bluetooth/bluetooth-qual.html) listings, making it easier for final products to obtain qualification from the Bluetooth® SIG.
+- Powerful hardware abstraction and configuration using [DeviceTree](https://docs.zephyrproject.org/4.1.0/build/dts/index.html) and [Kconfig](https://docs.zephyrproject.org/4.1.0/build/kconfig/index.html).
+- A BLE stack that periodically obtains [qualification](https://docs.zephyrproject.org/4.1.0/connectivity/bluetooth/bluetooth-qual.html) listings, making it easier for final products to obtain qualification from the Bluetooth® SIG.
 - Multi-processor support, which is critical for power efficiency in upcoming MCUs.
 - Permissive licensing with its Apache 2.0 open source [license](https://www.apache.org/licenses/LICENSE-2.0).
 - A buzzing developer [community](https://github.com/zephyrproject-rtos/zephyr) including many leading [embedded technology](https://www.zephyrproject.org/project-members) companies.
@@ -37,7 +37,7 @@ ZMK uses the MIT [license](https://github.com/zmkfirmware/zmk/blob/main/LICENSE)
 
 ZMK has the potential to run on any platform supported by Zephyr™. However, it’s impractical for the ZMK contributors to test all possible hardware.
 
-The Zephyr™ [documentation](https://docs.zephyrproject.org/3.5.0/boards/index.html) describes which hardware is currently natively supported by the Zephyr™ platform. _Similar documentation covering which keyboards have been integrated into ZMK is currently being planned._
+The Zephyr™ [documentation](https://docs.zephyrproject.org/4.1.0/boards/index.html) describes which hardware is currently natively supported by the Zephyr™ platform. _Similar documentation covering which keyboards have been integrated into ZMK is currently being planned._
 
 ### Does ZMK compile for AVR?
 
@@ -51,7 +51,7 @@ ZMK is still in its infancy, so there’s a learning curve involved. But if you�
 
 ZMK uses the Zephyr concepts of "boards" and "shields" to refer to different parts of a keyboard build, that in turn get combined during a firmware build.
 This provides the modularity to be able to use composite keyboards with different compatible controllers.
-Please see the [explainer on boards & shields](development/hardware-integration/index.mdx#boards--shields) for more details.
+Please see the [explainer on boards & shields](hardware-integration/index.mdx#boards--shields) for more details.
 
 ### Does ZMK support wired split?
 
@@ -63,7 +63,7 @@ The latency of ZMK is comparable to other firmware offerings. ZMK is equipped wi
 
 ### Any chance for 2.4GHz dongle implementation?
 
-At this time, there are no current plans to implement 2.4GHz dongle mode. This is because utilizing Nordic's proprietary 2.4GHz low level protocols requires use of the Nordic Connect SDK, which is licensed with a more restrictive license than ZMK's MIT license. However, it is possible to [create a dongle](development/hardware-integration/dongle.mdx) for your keyboard that runs ZMK and communicates between parts using BLE (with encryption). This results in a 3.75ms average theoretical latency from the protocol itself.
+At this time, there are no current plans to implement 2.4GHz dongle mode. This is because utilizing Nordic's proprietary 2.4GHz low level protocols requires use of the Nordic Connect SDK, which is licensed with a more restrictive license than ZMK's MIT license. However, it is possible to [create a dongle](hardware-integration/dongle.mdx) for your keyboard that runs ZMK and communicates between parts using BLE (with encryption). This results in a 3.75ms average theoretical latency from the protocol itself.
 
 ### What bootloader does ZMK use?
 

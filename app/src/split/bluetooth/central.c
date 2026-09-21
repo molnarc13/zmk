@@ -122,7 +122,7 @@ void release_peripheral_input_subs(struct bt_conn *conn) {
     for (size_t i = 0; i < ARRAY_SIZE(peripheral_input_slots); i++) {
         if (peripheral_input_slots[i].conn == conn) {
             peripheral_input_slots[i].conn = NULL;
-            // memset(&peripheral_input_slots[i], 0, sizeof(struct peripheral_input_slot));
+            zmk_input_split_peripheral_disconnected(peripheral_input_slots[i].reg);
         }
     }
 }
@@ -1264,8 +1264,7 @@ static int finish_init() {
 void peripheral_event_work_callback(struct k_work *work) {
     struct peripheral_event_wrapper ev;
     while (k_msgq_get(&peripheral_event_msgq, &ev, K_NO_WAIT) == 0) {
-        LOG_DBG("Trigger key position state change for %d",
-                ev.event.data.key_position_event.position);
+        LOG_DBG("Trigger key position state change of type %d", ev.event.type);
         zmk_split_transport_central_peripheral_event_handler(&bt_central, ev.source, ev.event);
     }
 }

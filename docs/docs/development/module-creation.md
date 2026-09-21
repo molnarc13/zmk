@@ -10,11 +10,9 @@ sidebar_label: ZMK Module Creation
 - Modules containing drivers
 - Modules containing other features, such as visual effects
 
-See also Zephyr's [page on modules](https://docs.zephyrproject.org/3.5.0/develop/modules.html).
+See also Zephyr's [page on modules](https://docs.zephyrproject.org/4.1.0/develop/modules.html).
 
-:::tip
-For open source hardware designs, it can be convenient to use [Git submodules](https://github.blog/open-source/git/working-with-submodules/) to have the ZMK module also be a Git submodule of the repository hosting the hardware design.
-:::
+For open source hardware designs, it's recommended to **not** include the hardware design files in the ZMK module itself, since the module will be fetched by users during build and having design files in the module would likely make the module unnecessarily large and slow to fetch.
 
 ## Module Setup
 
@@ -71,13 +69,13 @@ Next, you need to define the options to build your module. These also go into `z
 - `settings` is a child property containing additional child properties, two of which are particularly relevant:
   - `board_root` points to the parent directory of a `boards` directory, which contains additional board/shield definitions.
   - `dts_root` points to the parent directory of a `dts` directory, which contains additional devicetree bindings.
-  - `snippet_root` points to the parent directory of a `snippets` directory, which contains [snippets](https://docs.zephyrproject.org/3.5.0/build/snippets/index.html).
+  - `snippet_root` points to the parent directory of a `snippets` directory, which contains [snippets](https://docs.zephyrproject.org/4.1.0/build/snippets/index.html).
 
 See the `zephyr/module.yml` found in the template for a usage example.
 
 ### Dependencies
 
-If `zephyr/module.yml` has anything listed under `depends`, then you should also define a [west manifest](https://docs.zephyrproject.org/3.5.0/develop/west/manifest.html) file. While the `zephyr/module.yml` file defines _which_ modules your module depends on, the west manifest file defines _where_ said modules are found. This then allows automatic tooling to fetch the modules when building firmware. If `depends` is not present in `zephyr/module.yml`, then this file (named `west.yml` in the template) should be removed.
+If `zephyr/module.yml` has anything listed under `depends`, then you should also define a [west manifest](https://docs.zephyrproject.org/4.1.0/develop/west/manifest.html) file. While the `zephyr/module.yml` file defines _which_ modules your module depends on, the west manifest file defines _where_ said modules are found. This then allows automatic tooling to fetch the modules when building firmware. If `depends` is not present in `zephyr/module.yml`, then this file (named `west.yml` in the template) should be removed.
 
 It is recommended that you place the manifest file at the root of your module, though you can place it elsewhere. Be sure to note in your `README.md` that your module uses dependencies, so that users import these correctly.
 Below is an example `west.yml` file for a user that would be using your module, with the necessary `import` field if the module has dependencies:
@@ -126,22 +124,22 @@ The below table reminds of the purpose of each of these files and folders, if yo
 | `Kconfig`        | Kconfig file for the module                                                           |
 | `include/`       | Folder for C header files                                                             |
 | `src/`           | Folder for C source files                                                             |
-| `snippets/`      | Folder for [snippets](https://docs.zephyrproject.org/3.5.0/build/snippets/index.html) |
+| `snippets/`      | Folder for [snippets](https://docs.zephyrproject.org/4.1.0/build/snippets/index.html) |
 
 Note that the `include` and `src` folders are not mandated by the module system, and all of these can be positioned anywhere in your module's filetree if you adjust the `zephyr/module.yml` accordingly. The `west.yml` file is not commonly present in any of the types.
 
 Modules should expose all provided header files with an include path name beginning with the module-name, for example at `include/zmk_<type>_<description>/<header>.h`.
 
 :::info
-If your module requires adding drivers to existing subsystems in modules, you will need to use the `zephyr_library_amend()` CMake command, which requires you to have a specific directory structure. See [here](https://github.com/zephyrproject-rtos/zephyr/blob/main/cmake/modules/extensions.cmake#L454) for the definition and some documentation in the comments, with an example [here](https://github.com/petejohanson/ec-support-zmk-module/tree/main/drivers/kscan).
+If your module requires adding drivers to existing subsystems in modules, you will need to use the `zephyr_library_amend()` CMake command, which requires you to have a specific directory structure. See [`zephyr/cmake/modules/extensions.cmake`](https://github.com/zephyrproject-rtos/zephyr/blob/main@%7B2025-Feb-15%7D/cmake/modules/extensions.cmake#L492) for the definition and some documentation in the comments, with an example in [`petejohanson/ec-support-zmk-module`](https://github.com/petejohanson/ec-support-zmk-module/tree/main/drivers/kscan).
 :::
 
 ## Examples
 
 Below are some examples of modules for different types. Unless under the `zmkfirmware` project, these are not endorsed officially and may not follow our conventions perfectly. For such reason, the modules chosen to be presented here may change with time.
 
-- Keyboard: https://github.com/petejohanson/zmk-keyboards-katori
-- Behavior: https://github.com/urob/zmk-leader-key
-- Driver: https://github.com/petejohanson/cirque-input-module
-- Feature: https://github.com/joelspadin/zmk-locales
-- VFX: https://github.com/caksoylar/zmk-rgbled-widget
+- Keyboard: <https://github.com/petejohanson/zmk-keyboards-katori>
+- Behavior: <https://github.com/urob/zmk-leader-key>
+- Driver: <https://github.com/petejohanson/cirque-input-module>
+- Feature: <https://github.com/joelspadin/zmk-locales>
+- VFX: <https://github.com/caksoylar/zmk-rgbled-widget>

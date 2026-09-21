@@ -41,13 +41,13 @@ const struct device *z_impl_behavior_get_binding(const char *name) {
     }
 
     STRUCT_SECTION_FOREACH(zmk_behavior_ref, item) {
-        if (z_device_is_ready(item->device) && item->device->name == name) {
+        if (device_is_ready(item->device) && item->device->name == name) {
             return item->device;
         }
     }
 
     STRUCT_SECTION_FOREACH(zmk_behavior_ref, item) {
-        if (z_device_is_ready(item->device) && strcmp(item->device->name, name) == 0) {
+        if (device_is_ready(item->device) && strcmp(item->device->name, name) == 0) {
             return item->device;
         }
     }
@@ -130,8 +130,10 @@ static int validate_hid_usage(uint16_t usage_page, uint16_t usage_id) {
     LOG_DBG("Validate usage %d in page %d", usage_id, usage_page);
     switch (usage_page) {
     case HID_USAGE_KEY:
-        if (usage_id == 0 || (usage_id > ZMK_HID_KEYBOARD_NKRO_MAX_USAGE &&
-                              usage_id < LEFT_CONTROL && usage_id > RIGHT_GUI)) {
+        if (usage_id == 0 ||
+            (usage_id > ZMK_HID_KEYBOARD_NKRO_MAX_USAGE &&
+             usage_id < HID_USAGE_KEY_KEYBOARD_LEFTCONTROL) ||
+            usage_id > HID_USAGE_KEY_KEYBOARD_RIGHT_GUI) {
             return -EINVAL;
         }
         break;
@@ -267,7 +269,7 @@ zmk_behavior_local_id_t zmk_behavior_get_local_id(const char *name) {
     }
 
     STRUCT_SECTION_FOREACH(zmk_behavior_local_id_map, item) {
-        if (z_device_is_ready(item->device) && strcmp(item->device->name, name) == 0) {
+        if (device_is_ready(item->device) && strcmp(item->device->name, name) == 0) {
             return item->local_id;
         }
     }
@@ -277,7 +279,7 @@ zmk_behavior_local_id_t zmk_behavior_get_local_id(const char *name) {
 
 const char *zmk_behavior_find_behavior_name_from_local_id(zmk_behavior_local_id_t local_id) {
     STRUCT_SECTION_FOREACH(zmk_behavior_local_id_map, item) {
-        if (z_device_is_ready(item->device) && item->local_id == local_id) {
+        if (device_is_ready(item->device) && item->local_id == local_id) {
             return item->device->name;
         }
     }
