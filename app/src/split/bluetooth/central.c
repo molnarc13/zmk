@@ -121,7 +121,6 @@ void release_peripheral_input_subs(struct bt_conn *conn) {
     for (size_t i = 0; i < ARRAY_SIZE(peripheral_input_slots); i++) {
         if (peripheral_input_slots[i].conn == conn) {
             peripheral_input_slots[i].conn = NULL;
-            // memset(&peripheral_input_slots[i], 0, sizeof(struct peripheral_input_slot));
         }
     }
 }
@@ -206,7 +205,7 @@ int release_peripheral_slot(int index) {
         slot->changed_positions[i] = 0U;
     }
 
-    // Clean up previously discovered handles;
+    // Clean up previously discovered handles
     slot->subscribe_params.value_handle = 0;
     slot->run_behavior_handle = 0;
     slot->selected_physical_layout_handle = 0;
@@ -304,7 +303,6 @@ struct zmk_input_event_msg {
 };
 
 K_MSGQ_DEFINE(peripheral_input_event_msgq, sizeof(struct zmk_input_event_msg), 5, 4);
-//   CONFIG_ZMK_SPLIT_BLE_CENTRAL_INPUT_QUEUE_SIZE, 4);
 
 void peripheral_input_event_work_callback(struct k_work *work) {
     struct zmk_input_event_msg msg;
@@ -527,9 +525,6 @@ static int update_peripheral_selected_layout(struct peripheral_slot *slot, uint8
     }
 
     if (slot->selected_physical_layout_handle == 0) {
-        // It appears that sometimes the peripheral is considered connected
-        // before the GATT characteristics have been discovered. If this is
-        // the case, the selected_physical_layout_handle will not yet be set.
         return -EAGAIN;
     }
 
@@ -841,8 +836,7 @@ static bool split_central_eir_found(const bt_addr_le_t *addr) {
 
     LOG_DBG("Initiating new connection");
     struct bt_le_conn_param *param =
-        BT_LE_CONN_PARAM(CONFIG_ZMK_SPLIT_BLE_PREF_INT, CONFIG_ZMK_SPLIT_BLE_PREF_INT,
-                         CONFIG_ZMK_SPLIT_BLE_PREF_LATENCY, CONFIG_ZMK_SPLIT_BLE_PREF_TIMEOUT);
+        BT_LE_CONN_PARAM(6, 6, 0, 800);
     err = bt_conn_le_create(addr, BT_CONN_LE_CREATE_CONN, param, &slot->conn);
     if (err < 0) {
         LOG_ERR("Create conn failed (err %d) (create conn? 0x%04x)", err, BT_HCI_OP_LE_CREATE_CONN);
